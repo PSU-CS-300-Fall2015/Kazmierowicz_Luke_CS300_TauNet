@@ -15,7 +15,7 @@ public class Main extends Utility{
 
             RC4 rc4 = new RC4(key);
 
-            String secret = "Hey man, what's up!";
+            String secret = "Hey, what's up?";
 
             String code = rc4.encrypt(secret);
 
@@ -30,34 +30,6 @@ public class Main extends Utility{
             System.out.println(error.getMessage());
         }
 
-        try {
-
-            RC4 rc4 = new RC4(key);
-
-            String secret = "Hey man, what's up!";
-
-            String code = rc4.encrypt(secret);
-
-            println("Encrypted code: " + stringToHex(code));
-
-            code = rc4.decrypt(code);
-
-            println("Decrypted code: " + code);
-
-
-        } catch(InvalidKeyException error) {
-            System.out.println(error.getMessage());
-        }
-
     }
 
-    static String stringToHex(String string) {
-        StringBuilder buf = new StringBuilder(200);
-        for (char ch: string.toCharArray()) {
-            if (buf.length() > 0)
-                buf.append(' ');
-            buf.append(String.format("%04x", (int) ch));
-        }
-        return buf.toString();
-    }
 }
