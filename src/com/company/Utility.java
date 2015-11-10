@@ -137,10 +137,20 @@ public class Utility {
         System.out.print(str);
     }
 
+    /** Print a char array to the console. */
+    protected static void print(final char [] str) {
+        System.out.print(str);
+    }
+
 
 
     /** Print a string to the console with a newline at the end. */
     protected static void println(final String str) {
+        System.out.println(str);
+    }
+
+    /** Print a char array to the console with a newline at the end. */
+    protected static void println(final char [] str) {
         System.out.println(str);
     }
 
