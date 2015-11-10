@@ -6,7 +6,7 @@ public class Main extends Utility{
 	// write your code here
 
         //Run some tests on every compile
-        Test test = new Test();
+        //Test test = new Test();
 
         //Encrypt/decrypt key
         String key = "I97o23754o";
@@ -15,15 +15,15 @@ public class Main extends Utility{
 
             RC4 rc4 = new RC4(key);
 
-            String secret = "Hey, what's up?";
+            String secret = "This is a test of CipherSaber.";
 
-            String code = rc4.encrypt(secret);
+            char [] code = rc4.encrypt(secret);
 
-            println("Encrypted code: " + code);
+            println("Encrypted code: " + new String(code));
 
-            code = rc4.decrypt(code);
+            String message = rc4.decrypt(code);
 
-            println("Decrypted code: " + code);
+            println("Decrypted code: " + message);
 
 
         } catch(InvalidKeyException error) {

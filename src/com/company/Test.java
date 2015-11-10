@@ -37,7 +37,7 @@ public class Test extends Utility{
         didCatch = false;
 
         key = "";
-        for (int i = 0; i < 54; ++i) {
+        for (int i = 0; i < 256; ++i) {
             key = key + (i % 10);
         }
 

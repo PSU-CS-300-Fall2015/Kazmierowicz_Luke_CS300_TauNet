@@ -17,18 +17,17 @@ package com.company;
 public class RC4 {
 
     //state vector
-    private int [] stateVector;
+    private int [] state;
 
     //A variable-length key of from 1 to 256 bytes
     private char [] key;
 
-    private static final int stateVectorLength = 54;
+    private static final int stateVectorLength = 256;
     private static final int minKeyLength = 10;
-    private static final int iterationsDiscarded = 0;
+    private static final int iterationsDiscarded = 20;
 
     public RC4(String key) throws InvalidKeyException {
         setKey(key);
-
 
     }
 
@@ -45,43 +44,51 @@ public class RC4 {
 
 
 
-    public String encrypt(final String msgString) {
+    public char [] encrypt(final String msg) {
+        //Encrypting an encrypted message will yield the original message
+        return encrypt(msg.toCharArray());
+    }
 
-        char [] msg = msgString.toCharArray();
+
+
+    public String decrypt(final char [] msg) {
+        //Encrypting an encrypted message will yield the original message
+        return new String(encrypt(msg));
+    }
+
+
+
+    private char [] encrypt(final char [] msg) {
 
         //Stream Generation
         int i, j;
         i = j = 0;
 
         initStateVector();
+
         char [] code = new char[msg.length];
 
         for (int x = 0; x < msg.length; ++x) {
             i = (i+1) % stateVectorLength;
-            j = (j + stateVector[i]) % stateVectorLength;
+            j = (j + state[i]) % stateVectorLength;
             swap(i, j);
-            int k = (stateVector[i] + stateVector[j]) % stateVectorLength;
+            int k = (state[i] + state[j]) % stateVectorLength;
             code[x] = (char)(k ^ (int)msg[x]);
         }
 
-        return new String(code);
+        return code;
     }
 
-
-    public String decrypt(final String msg) {
-        //Encrypting an encrypted message will yield the original message
-        return encrypt(msg);
-    }
 
 
     private void initStateVector() {
 
-        stateVector  = new int[stateVectorLength];
+        state  = new int[stateVectorLength];
         int [] tempVector = new int[stateVectorLength];
 
 
         for (int i = 0; i < stateVectorLength; ++i) {
-            stateVector[i] = i;
+            state[i] = i;
             tempVector[i] = key[i % key.length];
         }
 
@@ -90,7 +97,7 @@ public class RC4 {
         for (int n = 0; n < iterationsDiscarded+1; ++n) {
             //Initial permutation of stateVector
             for (int i = 0, j = 0; i < stateVectorLength; ++i) {
-                j = (j + stateVector[i] + tempVector[i]) % stateVectorLength;
+                j = (j + state[i] + tempVector[i]) % stateVectorLength;
 
                 //Swap values in state vector in pos i and j
                 swap(i, j);
@@ -101,9 +108,9 @@ public class RC4 {
 
     //Swap values in state vector in position i and j
     private void swap(int i, int j) {
-        int temp = stateVector[i];
-        stateVector[i] = stateVector[j];
-        stateVector[j] = temp;
+        int temp = state[i];
+        state[i] = state[j];
+        state[j] = temp;
     }
 
 
