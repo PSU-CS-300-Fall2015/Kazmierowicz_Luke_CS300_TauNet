@@ -1,7 +1,14 @@
 package com.company;
 
 /**
- * Created by lukekaz9 on 11/19/15.
+ * Copyright (c) Luke Kazmierowicz 2015
+ * CS 300
+ * Project: TauNet
+ * Filename: TauNet.java
+ *
+ * References:
+ *
+ *
  */
 public class TauNet extends Utility {
 

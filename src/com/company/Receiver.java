@@ -12,6 +12,9 @@ import java.io.*;
  * References:
  *  ORACLE, Java Documentation: Reading from and Writing to a Socket
  *
+ * Purpose:
+ *  Listen for messages on specified port number and alert the client if new ones come in
+ *
  */
 
 public class Receiver extends Utility implements Runnable {

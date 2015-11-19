@@ -19,32 +19,6 @@ public class CipherSaber2 extends Utility{
     private static final int MAX_KEY_LENGTH = 53;
 
 
-    /** Testing for CipherSaber2 */
-    public static void main(String[] args) {
-
-        String message = "mead";
-
-        //Encrypt/decrypt key
-        String key = "SomethingCool#";
-
-        CipherSaber2 rc4 = new CipherSaber2();
-
-        try {
-
-            char[] cipherText = rc4.encrypt(message, key.toCharArray());
-
-            println(cipherText);
-
-            String plainText = rc4.decrypt(cipherText, key.toCharArray());
-
-            println(plainText);
-
-        } catch (InvalidKeyException error) {
-            println(error.getMessage());
-        }
-    }
-
-
 
     /** Produce an RC4 keystream of length n with
      * r rounds of key scheduling given key k */
@@ -52,13 +26,13 @@ public class CipherSaber2 extends Utility{
 
         //Initialize the array.
         int [] S = new int[256];
-        for (int i = 0; i < 256; ++i) {
+        for (int i = 0; i < 256; i++) {
             S[i] = i;
         }
 
         //Do key scheduling.
         int j = 0;
-        for (int x = 0; x < ROUNDS_OF_KEY_SCHEDULING; ++x) {
+        for (int x = 0; x < ROUNDS_OF_KEY_SCHEDULING; x++) {
             for (int i = 0; i < 256; ++i) {
                 j = (j + S[i] + key[i % key.length]) % 256;
                 int temp = S[i];
@@ -70,7 +44,7 @@ public class CipherSaber2 extends Utility{
         //Finally, produce the stream.
         char [] keyStream = new char[keyStreamLength];
         j = 0;
-        for (int x = 0; x < keyStreamLength; ++x) {
+        for (int x = 0; x < keyStreamLength; x++) {
             int i = (x+1) % 256;
             j = (j + S[i]) % 256;
 
@@ -108,7 +82,7 @@ public class CipherSaber2 extends Utility{
         System.arraycopy(iv, 0, cipherText, 0, IV_LENGTH);
 
         //xor the plaintext with the key stream to produce the cipher text
-        for (int i = 0; i < mes.length; ++i) {
+        for (int i = 0; i < mes.length; i++) {
             cipherText[i + IV_LENGTH] = (char)(mes[i] ^ keyStream[i]);
         }
 
@@ -138,7 +112,7 @@ public class CipherSaber2 extends Utility{
         char [] plainText = new char[mes.length];
 
         //xor the cipher text with the key stream to produce the plaintext
-        for (int i = 0; i < mes.length; ++i) {
+        for (int i = 0; i < mes.length; i++) {
             plainText[i] = (char)(mes[i] ^ keyStream[i]);
         }
 
@@ -172,4 +146,33 @@ public class CipherSaber2 extends Utility{
     }
 
 
+
+
+
+
+
+    /** Testing for CipherSaber2 */
+    public static void main(String[] args) {
+
+        String message = "mead";
+
+        //Encrypt/decrypt key
+        String key = "SomethingCool#";
+
+        CipherSaber2 rc4 = new CipherSaber2();
+
+        try {
+
+            char[] cipherText = rc4.encrypt(message, key.toCharArray());
+
+            println(cipherText);
+
+            String plainText = rc4.decrypt(cipherText, key.toCharArray());
+
+            println(plainText);
+
+        } catch (InvalidKeyException error) {
+            println(error.getMessage());
+        }
+    }
 }
