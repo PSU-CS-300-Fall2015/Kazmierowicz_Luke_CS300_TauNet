@@ -10,12 +10,39 @@ package com.company;
  *  Document entitled, THE RC4 STREAM ENCRYPTION ALGORITHM by William Stallings
  *  CipherSaber-2 GitHub repository by Bart Massey
  */
+
 public class CipherSaber2 extends Utility{
 
     private static final int IV_LENGTH = 10;
     private static final int ROUNDS_OF_KEY_SCHEDULING = 20;
     private static final int MIN_KEY_LENGTH = 10;
     private static final int MAX_KEY_LENGTH = 53;
+
+
+    /** Testing for CipherSaber2 */
+    public static void main(String[] args) {
+
+        String message = "mead";
+
+        //Encrypt/decrypt key
+        String key = "SomethingCool#";
+
+        CipherSaber2 rc4 = new CipherSaber2();
+
+        try {
+
+            char[] cipherText = rc4.encrypt(message, key.toCharArray());
+
+            println(cipherText);
+
+            String plainText = rc4.decrypt(cipherText, key.toCharArray());
+
+            println(plainText);
+
+        } catch (InvalidKeyException error) {
+            println(error.getMessage());
+        }
+    }
 
 
 
