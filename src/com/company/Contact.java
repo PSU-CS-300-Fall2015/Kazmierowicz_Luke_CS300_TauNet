@@ -9,10 +9,10 @@ package com.company;
  * Bundle a users information including their IP Address and Username
  *
  * */
-public class Contact extends Utility {
+public class Contact extends Utility implements Comparable<Contact> {
 
     private static final int USERNAME_MIN_LENGTH = 3;
-    private static final int USERNAME_MAX_LENGTH = 12;
+    private static final int USERNAME_MAX_LENGTH = 30;
 
     private String username;
     private String IPAddress;
@@ -32,11 +32,30 @@ public class Contact extends Utility {
     }
 
 
+
+    /**
+     * Print all contact info to display.
+     */
+    public void display() {
+        print("Username: ");
+        displayUsername();
+    }
+
+
     /**
      * Print the username to the screen.
      */
-    public void display() {
+    public void displayUsername() {
         print(username);
+    }
+
+
+
+    /**
+     * Print the IP address to the screen.
+     */
+    public void displayIPAddress() {
+        print(IPAddress);
     }
 
 
@@ -46,11 +65,10 @@ public class Contact extends Utility {
      * @param username
      * @throws InvalidUsernameException
      */
-    private void setUsername(String username) throws InvalidUsernameException {
+    private void setUsername(final String username) throws InvalidUsernameException {
 
         //Check if username is valid
-        isValidLength(username);
-        containsValidCharacters(username);
+        validateUsername(username);
 
         //Our checks didn't throw any exceptions, so the username is valid
         this.username = username;
@@ -67,13 +85,30 @@ public class Contact extends Utility {
     }
 
 
+    /**
+     * Supply the contacts username
+     * @return Username as a string
+     */
+    public String getUsername() {
+        return username;
+    }
+
+
+    /** Check if a string is a valid username.
+     *
+     */
+    static public void validateUsername(final String username) throws InvalidUsernameException {
+        isValidLength(username);
+        containsValidCharacters(username);
+    }
+
 
     /**
      * Checks if the username is a valid length, throws an exception if it's not
      * @param username
      * @throws InvalidUsernameException
      */
-    private void isValidLength(final String username) throws InvalidUsernameException {
+    static private void isValidLength(final String username) throws InvalidUsernameException {
 
         if (username.length() > USERNAME_MAX_LENGTH) {
             throw new InvalidUsernameException("The username is too long. Must be less than " + USERNAME_MAX_LENGTH + " characters.");
@@ -90,7 +125,7 @@ public class Contact extends Utility {
      * @param username
      * @throws InvalidUsernameException
      */
-    private void containsValidCharacters(final String username) throws InvalidUsernameException {
+    static private void containsValidCharacters(final String username) throws InvalidUsernameException {
 
         for (int i = 0; i < username.length(); i++) {
 
@@ -102,7 +137,29 @@ public class Contact extends Utility {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Contact contact = (Contact) o;
+
+        return !(username != null ? !username.equals(contact.username) : contact.username != null);
+    }
+
+
+    @Override
+    public int compareTo(Contact o) {
+
+        //compare name
+        return username.compareToIgnoreCase(o.username);
+
+    }
+
+    @Override
+    public String toString() {
+        return username + ": " + IPAddress;
+    }
 
 
     /** Testing for Contact object */
@@ -177,6 +234,32 @@ public class Contact extends Utility {
         } catch(InvalidUsernameException error) {
             println(error.getMessage());
         }
+
+
+
+        try {
+            println();
+            println();
+
+            //Invalid characters
+            luke = new Contact("lukekaz9", "198.29.41.107");
+            luke.display();
+            println();
+
+            Contact contact = new Contact("lukekaz9", "41");
+            contact.display();
+            println();
+
+            if (luke.equals(contact)) {
+                println("They match!");
+            } else {
+                println("They don't match.");
+            }
+
+        } catch(InvalidUsernameException error) {
+            println(error.getMessage());
+        }
+
 
     }
 

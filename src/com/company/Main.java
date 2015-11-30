@@ -8,9 +8,9 @@ public class Main extends Utility {
 
         /**Testing */
         //CipherSaber2.main(null);
-        Contact.main(null);
-
-        //TauNet taunet = new TauNet();
+        //Contact.main(null);
+        TauNet taunet = new TauNet();
+        //Message.main(null);
 
 
     }

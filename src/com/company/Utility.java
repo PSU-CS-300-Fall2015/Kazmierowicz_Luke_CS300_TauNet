@@ -142,6 +142,11 @@ public class Utility {
         System.out.print(str);
     }
 
+    /** Print a single character to the console. */
+    protected static void print(final char ch) {
+        System.out.print(ch);
+    }
+
 
 
     /** Print a string to the console with a newline at the end. */
@@ -157,6 +162,23 @@ public class Utility {
 
     /** Print a newline to the console. */
     protected static void println() {
+        System.out.println();
+    }
+
+    /** Delete a line from the console. */
+    protected static void deleteln() {
+
+        int count = 1;
+        System.out.print(String.format("\033[%dA",count)); // Move up
+        System.out.print("\033[2K"); // Erase line content
+    }
+
+    /** Clear a line from the console. */
+    protected static void clearln() {
+
+        int count = 1;
+        System.out.print(String.format("\033[%dA",count)); // Move up
+        System.out.print("\033[2K"); // Erase line content
         System.out.println();
     }
 
