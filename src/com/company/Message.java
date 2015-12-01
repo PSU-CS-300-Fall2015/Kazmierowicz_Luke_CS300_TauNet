@@ -30,13 +30,7 @@ public class Message extends Utility {
 
     /** Construct an message to represent a unrecognizable message. */
     Message() {
-        unrecognizedMessage = true;
-        try {
-            sender = new Contact("Unknown", "");
-        } catch (InvalidUsernameException e) {
-            println(e.getMessage());
-        }
-        body = "Uninterpretable message received!";
+
     }
 
 
@@ -58,11 +52,22 @@ public class Message extends Utility {
     /** Construct a message that was received. */
     Message(final String encodedMessage) throws InvalidMessageException {
 
-        println(encodedMessage);
+        //println(encodedMessage);
 
         separateMessageParts(encodedMessage);
     }
 
+
+
+    public void setAsError(final String errorMessage) {
+        unrecognizedMessage = true;
+        try {
+            sender = new Contact("Unknown", "");
+        } catch (InvalidUsernameException e) {
+            println(e.getMessage());
+        }
+        body = errorMessage;
+    }
 
 
 
@@ -72,9 +77,9 @@ public class Message extends Utility {
         String encoding = "";
 
         //Create encoded message
-        encoding += "version: " + versionNumber + "\n";
-        encoding += "from: " + sender.getUsername() + "\n";
-        encoding += "to: " + recipient.getUsername() + "\n\n";
+        encoding += "version: " + versionNumber + "\r\n";
+        encoding += "from: " + sender.getUsername() + "\r\n";
+        encoding += "to: " + recipient.getUsername() + "\r\n\r\n";
         encoding += body;
 
         return encoding;
@@ -104,9 +109,12 @@ public class Message extends Utility {
         //Get version number
         String versionNumberTemp = "";
         int i = 9;
-        for (; (i < message.length() && message.charAt(i) != '\n'); i++) {
+        for (; (i < message.length() && message.charAt(i) != '\r'); i++) {
             versionNumberTemp += message.charAt(i);
         }
+        //Skip newline
+        i++;
+
         //If the version number doesn't match, bail
         versionNumber = versionNumberTemp;
         if (!TauNet.matchesSystemVersion(versionNumber)) {
@@ -117,9 +125,11 @@ public class Message extends Utility {
 
         //Get sender username
         String senderTemp = "";
-        for (i += 7; (i < message.length() && message.charAt(i) != '\n'); i++) {
+        for (i += 7; (i < message.length() && message.charAt(i) != '\r'); i++) {
             senderTemp += message.charAt(i);
         }
+        //Skip newline
+        i++;
 
         //Get sender contact
         try {
@@ -134,9 +144,12 @@ public class Message extends Utility {
 
         //Get intended recipient username
         String recipientTemp = "";
-        for (i += 5; (i < message.length() && message.charAt(i) != '\n'); i++) {
+        for (i += 5; (i < message.length() && message.charAt(i) != '\r'); i++) {
             recipientTemp += message.charAt(i);
         }
+        //Skip newline
+        i++;
+
         //Check if we are the intended recipient
         if (notIntendedRecipient =!TauNet.isSystemUsername(recipientTemp)) {
             unknownRecipientUsername = recipientTemp;
@@ -153,7 +166,10 @@ public class Message extends Utility {
         }
         body = "";
         while (x < message.length()) {
-            body += message.charAt(x);
+
+            if (message.charAt(x)  != '\r') {
+                body += message.charAt(x);
+            }
             x++;
         }
     }
@@ -185,7 +201,7 @@ public class Message extends Utility {
             println("You");
         }
 
-        println(body);
+        print(body);
     }
 
 
