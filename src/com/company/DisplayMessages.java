@@ -41,14 +41,6 @@ public class DisplayMessages extends Utility implements Runnable {
                 justWaited = true;
             }
 
-            //If got new messages while we were waiting then print a new message alert
-            if (justWaited && TauNet.messageQueue != null && !TauNet.messageQueue.isEmpty()) {
-
-                if (TauNet.messageQueue.size() > 1)
-                    println("New messages:");
-                else
-                    println("New message:");
-            }
 
             //Print all the messages in the queue
             while (TauNet.messageQueue != null && !TauNet.messageQueue.isEmpty()) {
@@ -67,13 +59,8 @@ public class DisplayMessages extends Utility implements Runnable {
 
 
                 if (newMessage != null) {
-                    //If the new message is from the same user as the last don't print their username again
-                    //if (!justWaited && TauNet.lastMessageReceived != null && TauNet.lastMessageReceived.getSender().equals(newMessage.getSender())) {
-                    //    newMessage.displayBodyOnly();
-                    //} else {
-                    //    newMessage.displayAll();
-                    //}
-                    newMessage.displayAll();
+
+                    newMessage.display();
                     println();
                 }
 
