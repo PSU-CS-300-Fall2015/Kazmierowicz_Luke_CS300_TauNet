@@ -1,5 +1,11 @@
 package com.company;
 
+import java.io.File;
+import java.io.FileInputStream;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 /**
  * (c) Luke Kazmierowicz 2015
  * CS 300
@@ -22,28 +28,27 @@ public class CipherSaber2 extends Utility{
 
     /** Ciphersaber-2 encrypt message m with key k and
      * r rounds of key scheduling. */
-    public char [] encrypt(String messageStr, char [] key) {
+    public byte [] encrypt(String messageStr, byte [] key) {
 
-        char [] mes = messageStr.toCharArray();
+
+        byte [] mes = messageStr.getBytes();
 
         //Get a key stream from rc4 seeded with current time
-        char [] seed = String.valueOf(System.currentTimeMillis()).toCharArray();
-        char [] iv = produceKeyStream(IV_LENGTH, seed);
-
-        iv = "1234567890".toCharArray();
+        byte [] seed = String.valueOf(System.currentTimeMillis()).getBytes();
+        byte [] iv = produceKeyStream(IV_LENGTH, seed);
 
         //Append the initialization vector to the key
         key = append(key, iv);
 
-        char [] keyStream = produceKeyStream(mes.length, key);
-        char [] cipherText = new char[mes.length + IV_LENGTH];
+        byte [] keyStream = produceKeyStream(mes.length, key);
+        byte [] cipherText = new byte[mes.length + IV_LENGTH];
 
         //Make the first part of the message the unencrypted initialization vector
         System.arraycopy(iv, 0, cipherText, 0, IV_LENGTH);
 
         //xor the plaintext with the key stream to produce the cipher text
         for (int i = 0; i < mes.length; i++) {
-            cipherText[i + IV_LENGTH] = (char)(mes[i] ^ keyStream[i]);
+            cipherText[i + IV_LENGTH] = (byte)(mes[i] ^ keyStream[i]);
         }
 
         return cipherText;
@@ -53,7 +58,7 @@ public class CipherSaber2 extends Utility{
 
     /** Ciphersaber-2 decrypt ciphertext m with key k and
      * r rounds of key scheduling */
-    public String decrypt(char [] cipherText, char [] key) throws InvalidCiphertextException {
+    public String decrypt(byte [] cipherText, byte [] key) throws InvalidCiphertextException {
 
         //Make sure the cipher text is shorter than the IV
         if (cipherText.length < IV_LENGTH) {
@@ -61,17 +66,18 @@ public class CipherSaber2 extends Utility{
         }
 
         //Get the initialization vector
-        char [] iv = new char[IV_LENGTH];
+        byte [] iv = new byte[IV_LENGTH];
         System.arraycopy(cipherText, 0, iv, 0, IV_LENGTH);
 
         //delete the iv from the front of the message
-        char [] mes = new char[cipherText.length - IV_LENGTH];
+        byte [] mes = new byte[cipherText.length - IV_LENGTH];
         System.arraycopy(cipherText, IV_LENGTH, mes, 0, mes.length);
 
         //Append the initialization vector to the key
         key = append(key, iv);
 
-        char [] keyStream = produceKeyStream(mes.length, key);
+
+        byte [] keyStream = produceKeyStream(mes.length, key);
         char [] plainText = new char[mes.length];
 
         //xor the cipher text with the key stream to produce the plaintext
@@ -87,7 +93,7 @@ public class CipherSaber2 extends Utility{
 
     /** Produce an RC4 keystream of length n with
      * r rounds of key scheduling given key k */
-    private char [] produceKeyStream(int keyStreamLength, char [] key) {
+    private byte [] produceKeyStream(int keyStreamLength, byte [] key) {
 
         //Initialize the array.
         int [] S = new int[256];
@@ -99,7 +105,7 @@ public class CipherSaber2 extends Utility{
         int j = 0;
         for (int x = 0; x < ROUNDS_OF_KEY_SCHEDULING; x++) {
             for (int i = 0; i < 256; i++) {
-                j = (j + S[i] + key[i % key.length]) % 256;
+                j = (j + S[i] + (char)key[i % key.length]) % 256;
                 int temp = S[i];
                 S[i] = S[j];
                 S[j] = temp;
@@ -107,7 +113,7 @@ public class CipherSaber2 extends Utility{
         }
 
         //Finally, produce the stream.
-        char [] keyStream = new char[keyStreamLength];
+        byte [] keyStream = new byte[keyStreamLength];
         j = 0;
         for (int x = 0; x < keyStreamLength; x++) {
             int i = (x+1) % 256;
@@ -117,7 +123,7 @@ public class CipherSaber2 extends Utility{
             S[i] = S[j];
             S[j] = temp;
 
-            keyStream[x] = (char)S[(S[i] + S[j]) % 256];
+            keyStream[x] = (byte)S[(S[i] + S[j]) % 256];
         }
 
         return keyStream;
@@ -127,9 +133,9 @@ public class CipherSaber2 extends Utility{
 
 
     /** Append str2 to str1 */
-    private char [] append(char [] str1, char [] str2) {
+    private byte [] append(byte [] str1, byte [] str2) {
 
-        char [] str = new char[str1.length + str2.length];
+        byte [] str = new byte[str1.length + str2.length];
 
         System.arraycopy(str1, 0, str, 0, str1.length);
         System.arraycopy(str2, 0, str, str1.length, str2.length);
@@ -138,7 +144,7 @@ public class CipherSaber2 extends Utility{
     }
 
 
-    public static void checkKeyLength(char [] key) throws InvalidKeyException {
+    public static void checkKeyLength(byte [] key) throws InvalidKeyException {
 
         //Make sure the key is a valid length
         if (key.length < MIN_KEY_LENGTH) {
@@ -153,6 +159,21 @@ public class CipherSaber2 extends Utility{
 
 
 
+    private static final char[] HEX_CHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
+            'B', 'C', 'D', 'E', 'F' };
+
+
+    public static String toHexString(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        int v;
+        for (int j = 0; j < bytes.length; j++) {
+            v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_CHARS[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_CHARS[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
 
 
 
@@ -160,37 +181,39 @@ public class CipherSaber2 extends Utility{
     public static void main(String[] args) {
 
 
-        String message = "Hey hows it going? My name is kaz. What's up!";
+        FileInputStream fin = null;
+        File file = new File("cstest.cs2");
 
-        //Encrypt/decrypt key
-        String key = "Applesauce42";
+        try {
+            fin = new FileInputStream(file);
 
-        CipherSaber2 rc4 = new CipherSaber2();
+            byte fileContent[] = new byte[(int)file.length()];
+
+            fin.read(fileContent);
 
 
-        for (int i = 0; i < 1; i++) {
-            try {
 
-                CipherSaber2.checkKeyLength(key.toCharArray());
+            println(toHexString(fileContent));
 
-                char[] cipherText = rc4.encrypt(message, key.toCharArray());
 
-                println(cipherText);
+            String key = "asdfg";
 
-                try {
-                    String plainText = rc4.decrypt(cipherText, key.toCharArray());
-                    //println(plainText);
-                    if (!plainText.equals(message)) {
-                        println("Failed test!");
-                        break;
-                    }
-                } catch (InvalidCiphertextException error) {
-                    println(error.getMessage());
-                }
+            CipherSaber2 rc4 = new CipherSaber2();
 
-            } catch (InvalidKeyException error) {
-                println(error.getMessage());
-            }
+            String message = rc4.decrypt(fileContent, key.getBytes());
+
+            println(message);
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidCiphertextException e) {
+            e.printStackTrace();
         }
+
+
     }
 }
