@@ -20,28 +20,38 @@ import java.net.*;
 public class Sender extends Utility {
 
     private int portNumber;
-    private char [] key;
+    private byte [] key;
 
 
-    Sender(final char [] key, final int portNumber) {
+    /** Sets key and port number. */
+    Sender(final byte [] key, final int portNumber) {
         this.key = key;
         this.portNumber = portNumber;
     }
 
+    /** Encrypts and attempts to send the message to it's intended recipient. */
     public void sendMessage(Message message) throws IOException {
 
         String hostName = message.getRecipient().getIPAddress();
 
+        //We can't send a message to a username if we don't have their IP
         if (hostName == null) {
-            println("Can't get IP to reply!");
+            println("User not in authorized list!");
         }
 
-        try (Socket echoSocket = new Socket(hostName, portNumber);
-             PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true)) {
+        //Open a socket at that IP and port number
+        try (Socket socket = new Socket(hostName, portNumber);
+             OutputStream out = socket.getOutputStream()) {
 
-            out.println(new CipherSaber2().encrypt(message.encodedStream(), key));
+            //Encrypt the message
+            byte byteArray[] = new CipherSaber2().encrypt(message.encodedStream(), key);
 
-            echoSocket.close();
+            //Write the message to the socket
+            out.write(byteArray);
+
+            socket.close();
+
+            println("Your message was successfully transmitted.");
 
         } catch (UnknownHostException e) {
             throw new UnknownHostException("The user \"" + message.getRecipient().getUsername() + "\" is not available. Try again later.");
