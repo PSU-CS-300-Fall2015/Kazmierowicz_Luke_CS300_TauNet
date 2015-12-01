@@ -19,9 +19,10 @@ import java.util.TreeSet;
  */
 public class TauNet extends Utility {
 
-    private static final int portNumber = 6283;
+    private static final int portNumberReceiver = 6283;
+    private static final int portNumberSender = 6283;
     private static final String version = "0.2";
-    private char [] universalKey;
+    private byte [] universalKey;
     private static String systemUsername;
     private static TreeSet<Contact> users;
 
@@ -29,7 +30,6 @@ public class TauNet extends Utility {
     public static Message lastMessageReceived;
 
     private Thread printerThread;
-    //private Receiver receiver;
 
     TauNet() {
 
@@ -37,7 +37,7 @@ public class TauNet extends Utility {
         importData("data.txt");
 
         //Start message listener on a new thread
-        Receiver receiver = new Receiver(universalKey, portNumber);
+        Receiver receiver = new Receiver(universalKey, portNumberReceiver);
         Thread receiverThread = new Thread(receiver);
         receiverThread.setName("Receiver Thread");
         receiverThread.start();
@@ -75,8 +75,7 @@ public class TauNet extends Utility {
         println("Waiting for incoming messages...");
 
 
-        Boolean again = true;
-        while (again) {
+        while (true) {
 
             String input;
             input = nextLine();
@@ -91,13 +90,17 @@ public class TauNet extends Utility {
 
                 //If we haven't received any messages yet
                 if (lastMessageReceived == null) {
-                    println("No previous message to reply to! Enter 'C' to compose a new message.");
+                    print("No previous message to reply to! Enter 'C' to compose a new message.");
                 }
                 else {
+                    print("Enter your reply to user \"" + lastMessageReceived.getSender().getUsername() + "\": ");
+
+                    input = nextLine();
+
                     //Create a message
                     Contact recipient = lastMessageReceived.getSender();
                     Message newMessage = new Message(version, recipient, systemUsername, input);
-                    Sender sender = new Sender(universalKey, portNumber);
+                    Sender sender = new Sender(universalKey, portNumberSender);
 
                     //Try to send the message
                     try {
@@ -109,8 +112,8 @@ public class TauNet extends Utility {
                 }
             } else if (input.equalsIgnoreCase("q")) {
 
-                //End loop to exit program
-                again = false;
+                println("Program closing...");
+                System.exit(0);
 
             }//Invalid input
             else {
@@ -138,8 +141,7 @@ public class TauNet extends Utility {
         displayUsers();
 
         print("Enter the username you wish to send a message to: ");
-        boolean again = true;
-        while (again) {
+        while (true) {
             String input = nextLine();
             try {
                 Contact recipient = getContactForUsername(input);
@@ -149,14 +151,14 @@ public class TauNet extends Utility {
 
                 Message newMessage = new Message(version, recipient, systemUsername, input);
 
-                Sender sender = new Sender(universalKey, portNumber);
+                Sender sender = new Sender(universalKey, portNumberSender);
                 sender.sendMessage(newMessage);
-                println("Your message was successfully transmitted.");
 
-                again = false;
+                break;
             }
             catch (IOException error) {
                 println(error.getMessage());
+                break;
             }
             catch (UnknownUserException error) {
                 print("That user is not in your contact. Try again: ");
@@ -215,7 +217,8 @@ public class TauNet extends Utility {
         users = new TreeSet<>();
 
         //On the first line there will be the encrypt/decrypt key
-        universalKey = source.readLine().toCharArray();
+        universalKey = source.readLine().getBytes();
+
         CipherSaber2.checkKeyLength(universalKey);
 
         //The second line will contain the username of this TauNet system
