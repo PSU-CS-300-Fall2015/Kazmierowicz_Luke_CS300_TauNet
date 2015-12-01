@@ -52,6 +52,7 @@ public class Sender extends Utility {
             socket.close();
 
             println("Your message was successfully transmitted.");
+            println("Waiting for incoming messages...");
 
         } catch (UnknownHostException e) {
             throw new UnknownHostException("The user \"" + message.getRecipient().getUsername() + "\" is not available. Try again later.");

@@ -1,7 +1,7 @@
-Applesauce42
+password
 lukekaz9
 
 LukePi
 198.29.41.107
-johnyApple
-198.24.43.107
+bart
+barton.cs.pdx.edu

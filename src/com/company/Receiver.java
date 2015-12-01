@@ -70,7 +70,6 @@ public class Receiver extends Utility implements Runnable {
                     int nextInt = in.read();
                     //If it's the EOF, exit loop
                     if (nextInt == -1) {
-                        println("READ EOF");
                         break;
                     }
                     //Store it in the byte array
