@@ -1,11 +1,5 @@
 package com.company;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.LinkedList;
 
 /**
  * Copyright (c) Luke Kazmierowicz 2015
@@ -29,9 +23,8 @@ public class DisplayMessages extends Utility implements Runnable {
 
         //Print any new messages to the screen every so often
         TauNet.lastMessageReceived = null;
-        boolean refreshMessages = true;
         boolean justWaited = true;
-        while (refreshMessages) {
+        while (true) {
 
             try {
                 //Wait before checking to print new messages again
@@ -40,7 +33,7 @@ public class DisplayMessages extends Utility implements Runnable {
 
                 //Wait until other printing to the screen is finished before printing any new messages
                 boolean wait = true;
-                while(wait) {
+                while (wait) {
                     wait = !Thread.interrupted();
                 }
 
@@ -67,7 +60,7 @@ public class DisplayMessages extends Utility implements Runnable {
 
                     //Before printing anything to the screen, we need to wait
                     boolean wait = true;
-                    while(wait) {
+                    while (wait) {
                         wait = !Thread.interrupted();
                     }
                 }
@@ -75,21 +68,20 @@ public class DisplayMessages extends Utility implements Runnable {
 
                 if (newMessage != null) {
                     //If the new message is from the same user as the last don't print their username again
-                    if (!justWaited && TauNet.lastMessageReceived != null && TauNet.lastMessageReceived.getSender().equals(newMessage.getSender())) {
-                        newMessage.displayBodyOnly();
-                    } else {
-                        newMessage.display();
-                    }
+                    //if (!justWaited && TauNet.lastMessageReceived != null && TauNet.lastMessageReceived.getSender().equals(newMessage.getSender())) {
+                    //    newMessage.displayBodyOnly();
+                    //} else {
+                    //    newMessage.displayAll();
+                    //}
+                    newMessage.displayAll();
                     println();
                 }
 
                 //Save this previous message printed for future reference
-                TauNet.lastMessageReceived  = newMessage;
+                TauNet.lastMessageReceived = newMessage;
                 justWaited = false;
             }
         }
-
-
     }
 
 }
