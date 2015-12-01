@@ -22,9 +22,9 @@ import java.util.Queue;
 
 public class Receiver extends Utility implements Runnable {
 
-    private final int MAX_MESSAGE_LENGTH = 500;
+    private final int MAX_MESSAGE_LENGTH = 1024;
     private int portNumber;
-    private char [] key;
+    private byte [] key;
 
 
     public void run() {
@@ -40,16 +40,18 @@ public class Receiver extends Utility implements Runnable {
     }
 
 
-    Receiver(final char [] key, final int portNumber) {
+    Receiver(final byte [] key, final int portNumber) {
         this.key = key;
         this.portNumber = portNumber;
     }
 
 
 
+
     /** Listen for messages and add new ones to the message queue. */
     private void startListening() throws IOException {
 
+        //Listen for messages until the end of the program
         while (true) {
 
             try (ServerSocket serverSocket = new ServerSocket(portNumber);
@@ -57,28 +59,37 @@ public class Receiver extends Utility implements Runnable {
                  InputStream in = clientSocket.getInputStream())
             {
 
-                //Get the encrypted bytes from the stream
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                int nRead;
-                byte[] data = new byte[MAX_MESSAGE_LENGTH];
-                while ((nRead = in.read(data, 0, data.length)) != -1) {
-                    buffer.write(data, 0, nRead);
-                }
-                buffer.flush();
-                char [] charArray = buffer.toString().toCharArray();
+                //Get all bytes until EOF
+                byte [] byteArray = new byte[MAX_MESSAGE_LENGTH];
+                int len = 0;
 
-                //Remove null character added by toCharArray
-                char [] encryptedMessage = new char[charArray.length-1];
-                for (int i = 0; i < encryptedMessage.length; i++) {
-                    encryptedMessage[i] = charArray[i];
+                //Get each byte in the message up to the max message length
+                while (len < MAX_MESSAGE_LENGTH) {
+
+                    //Get the integer value of the next byte
+                    int nextInt = in.read();
+                    //If it's the EOF, exit loop
+                    if (nextInt == -1) {
+                        println("READ EOF");
+                        break;
+                    }
+                    //Store it in the byte array
+                    byteArray[len] = (byte)nextInt;
+                    len++;
                 }
 
+                //Copy bytes to exact length byte array
+                byte [] encryptedMessage = new byte[len];
+                System.arraycopy(byteArray, 0, encryptedMessage, 0, len);
+
+
+                clientSocket.close();
+                serverSocket.close();
 
                 //Decrypt message
                 try {
                     String messageEncoded = (new CipherSaber2().decrypt(encryptedMessage, key));
 
-                    //println(allInput);
                     Message mes = new Message(messageEncoded);
 
                     //Add the new message to the queue
@@ -92,15 +103,18 @@ public class Receiver extends Utility implements Runnable {
                     if (TauNet.messageQueue == null) {
                         TauNet.messageQueue = new LinkedList<>();
                     }
+                    Message erMes = new Message();
+                    erMes.setAsError(error.getMessage());
+
                     //Add an unrecognized "flag" message to the queue
-                    TauNet.messageQueue.add(new Message());
+                    TauNet.messageQueue.add(erMes);
 
                 } catch (InvalidCiphertextException error) {
                     println(error.getMessage());
                 }
-
             }
         }
     }
+
 
 }
