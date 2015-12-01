@@ -12,6 +12,8 @@ package com.company;
 
 public class Message extends Utility {
 
+    private final int MAX_BODY_LENGTH = 934;
+
     private String versionNumber;
 
     private Contact sender;
@@ -35,7 +37,12 @@ public class Message extends Utility {
 
 
     /** Construct a message to be sent. */
-    Message(final String versionNumber, Contact recipient, String sender, String body) {
+    Message(final String versionNumber, Contact recipient, String sender, String body) throws InvalidMessageException {
+
+        //Check message length
+        if (body.length() > MAX_BODY_LENGTH) {
+            throw new InvalidMessageException("Message length must be less than " + MAX_BODY_LENGTH + " characters.");
+        }
 
         this.versionNumber = versionNumber;
         this.recipient = recipient;
@@ -147,8 +154,6 @@ public class Message extends Utility {
         for (i += 5; (i < message.length() && message.charAt(i) != '\r'); i++) {
             recipientTemp += message.charAt(i);
         }
-        //Skip newline
-        i++;
 
         //Check if we are the intended recipient
         if (notIntendedRecipient =!TauNet.isSystemUsername(recipientTemp)) {
@@ -216,14 +221,15 @@ public class Message extends Utility {
             return;
         }
 
+        print("\nMessage from ");
         if (fromUnknownSender) {
             print(unknownSenderUsername);
         }
         else {
             sender.displayUsername();
         }
-        println();
-        printBodyIndented();
+        print(": ");
+        print(body);
     }
 
 
@@ -246,7 +252,7 @@ public class Message extends Utility {
     /** Print the body to the screen indented one tab. */
     private void printBodyIndented() {
 
-        print("\t");
+        print("");
         for (int i = 0; i < body.length(); i++) {
 
             print(body.charAt(i));
@@ -256,6 +262,12 @@ public class Message extends Utility {
                 print("\t");
             }
         }
+    }
+
+
+    /** Return if the message is from an unknown sender or not. */
+    public boolean isFromUnknownSender() {
+        return fromUnknownSender;
     }
 
 
