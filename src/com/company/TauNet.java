@@ -83,33 +83,9 @@ public class TauNet extends Utility {
             if (input.equalsIgnoreCase("c")) {
                 composeMessage();
 
-                println("Waiting for incoming messages...");
-
             }//Reply to last received message
             else if (input.equalsIgnoreCase("r")) {
-
-                //If we haven't received any messages yet
-                if (lastMessageReceived == null) {
-                    print("No previous message to reply to! Enter 'C' to compose a new message.");
-                }
-                else {
-                    print("Enter your reply to user \"" + lastMessageReceived.getSender().getUsername() + "\": ");
-
-                    input = nextLine();
-
-                    //Create a message
-                    Contact recipient = lastMessageReceived.getSender();
-                    Message newMessage = new Message(version, recipient, systemUsername, input);
-                    Sender sender = new Sender(universalKey, portNumberSender);
-
-                    //Try to send the message
-                    try {
-                        sender.sendMessage(newMessage);
-                    } catch (IOException error) {
-                        println(error.getMessage());
-                    }
-
-                }
+                reply();
             } else if (input.equalsIgnoreCase("q")) {
 
                 println("Program closing...");
@@ -144,20 +120,38 @@ public class TauNet extends Utility {
         while (true) {
             String input = nextLine();
             try {
+                //Get the contact we should send the message to
                 Contact recipient = getContactForUsername(input);
 
                 print("Enter your message: ");
-                input = nextLine();
 
-                Message newMessage = new Message(version, recipient, systemUsername, input);
+                //While the message is invalid, ask again
+                while (true) {
+                    input = nextLine();
 
-                Sender sender = new Sender(universalKey, portNumberSender);
-                sender.sendMessage(newMessage);
+                    Message newMessage = null;
+                    try {
+                        //Create the message object
+                        newMessage = new Message(version, recipient, systemUsername, input);
+
+                        //Send the message
+                        Sender sender = new Sender(universalKey, portNumberSender);
+                        sender.sendMessage(newMessage);
+
+                        break;
+                    }//If the message was invalid inform the user
+                    catch (InvalidMessageException error) {
+                        println(error.getMessage());
+
+                        print("Enter your message again: ");
+                    }
+                }
 
                 break;
             }
             catch (IOException error) {
                 println(error.getMessage());
+                println("Waiting for incoming messages...");
                 break;
             }
             catch (UnknownUserException error) {
@@ -168,6 +162,56 @@ public class TauNet extends Utility {
         //Inform the receiver thread that it can start receiving again
         printerThread.interrupt();
 
+    }
+
+
+    /** Let user reply to last received message. */
+    private void reply() {
+
+        //If we haven't received any messages yet
+        if (lastMessageReceived == null) {
+            println("No previous message to reply to! Enter 'C' to compose a new message.");
+
+        }//If the message is from an unknown sender
+        else if (lastMessageReceived.isFromUnknownSender()) {
+            println("Can't reply to the message because the user is not in your contacts.");
+        } else {
+
+            //Pause the receiver thread until user input is finished
+            printerThread.interrupt();
+
+            print("Enter your reply to user \"" + lastMessageReceived.getSender().getUsername() + "\": ");
+
+            //Ask for message body until they enter a valid one
+            while (true) {
+
+                String input = nextLine();
+
+                //Create a message
+                Contact recipient = lastMessageReceived.getSender();
+                Message newMessage = null;
+                try {
+                    newMessage = new Message(version, recipient, systemUsername, input);
+                    Sender sender = new Sender(universalKey, portNumberSender);
+
+                    //Try to send the message
+                    try {
+                        sender.sendMessage(newMessage);
+                    } catch (IOException error) {
+                        println(error.getMessage());
+                    }
+
+                    //They entered a valid message body so we exit loop and stop asking
+                    break;
+                } catch (InvalidMessageException e) {
+                    println(e.getMessage());
+                    print("Enter your reply to user \"" + lastMessageReceived.getSender().getUsername() + "\": ");
+                }
+            }
+            //Inform the receiver thread that it can start receiving again
+            printerThread.interrupt();
+
+        }
     }
 
 
