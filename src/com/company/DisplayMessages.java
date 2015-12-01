@@ -23,7 +23,6 @@ public class DisplayMessages extends Utility implements Runnable {
 
         //Print any new messages to the screen every so often
         TauNet.lastMessageReceived = null;
-        boolean justWaited = true;
         while (true) {
 
             try {
@@ -37,8 +36,6 @@ public class DisplayMessages extends Utility implements Runnable {
                     wait = !Thread.interrupted();
                 }
 
-                //Save that we were just waiting for someone else to print to the screen
-                justWaited = true;
             }
 
 
@@ -66,7 +63,6 @@ public class DisplayMessages extends Utility implements Runnable {
 
                 //Save this previous message printed for future reference
                 TauNet.lastMessageReceived = newMessage;
-                justWaited = false;
             }
         }
     }
