@@ -77,39 +77,42 @@ public class Receiver extends Utility implements Runnable {
                     len++;
                 }
 
-                //Copy bytes to exact length byte array
-                byte [] encryptedMessage = new byte[len];
-                System.arraycopy(byteArray, 0, encryptedMessage, 0, len);
-
-
                 clientSocket.close();
                 serverSocket.close();
 
-                //Decrypt message
-                try {
-                    String messageEncoded = (new CipherSaber2().decrypt(encryptedMessage, key));
+                //Discard the message if it is empty, otherwise queue it up
+                if (len != 0) {
 
-                    Message mes = new Message(messageEncoded);
+                    //Copy bytes to exact length byte array
+                    byte[] encryptedMessage = new byte[len];
+                    System.arraycopy(byteArray, 0, encryptedMessage, 0, len);
 
-                    //Add the new message to the queue
-                    if (TauNet.messageQueue == null) {
-                        TauNet.messageQueue = new LinkedList<>();
+                    //Decrypt message
+                    try {
+                        String messageEncoded = (new CipherSaber2().decrypt(encryptedMessage, key));
+
+                        Message mes = new Message(messageEncoded);
+
+                        //Add the new message to the queue
+                        if (TauNet.messageQueue == null) {
+                            TauNet.messageQueue = new LinkedList<>();
+                        }
+                        TauNet.messageQueue.add(mes);
+
+                    } catch (InvalidMessageException error) {
+
+                        if (TauNet.messageQueue == null) {
+                            TauNet.messageQueue = new LinkedList<>();
+                        }
+                        Message erMes = new Message();
+                        erMes.setAsError(error.getMessage());
+
+                        //Add an unrecognized "flag" message to the queue
+                        TauNet.messageQueue.add(erMes);
+
+                    } catch (InvalidCiphertextException error) {
+                        println(error.getMessage());
                     }
-                    TauNet.messageQueue.add(mes);
-
-                } catch (InvalidMessageException error) {
-
-                    if (TauNet.messageQueue == null) {
-                        TauNet.messageQueue = new LinkedList<>();
-                    }
-                    Message erMes = new Message();
-                    erMes.setAsError(error.getMessage());
-
-                    //Add an unrecognized "flag" message to the queue
-                    TauNet.messageQueue.add(erMes);
-
-                } catch (InvalidCiphertextException error) {
-                    println(error.getMessage());
                 }
             }
         }

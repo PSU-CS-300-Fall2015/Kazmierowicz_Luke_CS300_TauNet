@@ -14,25 +14,30 @@ public class Message extends Utility {
 
     private final int MAX_BODY_LENGTH = 934;
 
+    //The version of TauNet the message was created on
     private String versionNumber;
 
+    //The contact of the person who sent the message
     private Contact sender;
+    //To store the senders username for if they are not in our contacts
     private String unknownSenderUsername;
+    //To mark if the sender was not in our contacts
     private Boolean fromUnknownSender = false;
 
+    //The intended recipient of the message
     private Contact recipient;
     private String unknownRecipientUsername;
+    //To mark if we were the intended recipient or not
     private Boolean notIntendedRecipient = false;
 
+    //To store the body of the message
     private String body;
-
     private Boolean unrecognizedMessage = false;
 
 
 
-    /** Construct an message to represent a unrecognizable message. */
+    /** Default constructor. */
     Message() {
-
     }
 
 

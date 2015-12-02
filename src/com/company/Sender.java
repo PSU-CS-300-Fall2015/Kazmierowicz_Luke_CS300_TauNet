@@ -29,6 +29,43 @@ public class Sender extends Utility {
         this.portNumber = portNumber;
     }
 
+
+
+    /** Check if a recipient is available. */
+    public boolean isAvailable(Contact recipient) {
+
+        String hostName = recipient.getIPAddress();
+
+        //We can't send a test message to the username if we don't have their IP
+        if (hostName == null) {
+            return false;
+        }
+
+        //Open a socket at that IP and port number
+        try (Socket socket = new Socket(hostName, portNumber);
+             OutputStream out = socket.getOutputStream()) {
+
+            //Create an empty message to send
+            byte byteArray[] = new byte[0];
+
+            //Write the empty message to the socket
+            out.write(byteArray);
+
+            socket.close();
+
+        } catch (UnknownHostException e) {
+            return false;
+
+        } catch (IOException e) {
+            return false;
+        }
+
+        //The test message was sent successfully
+        return true;
+    }
+
+
+
     /** Encrypts and attempts to send the message to it's intended recipient. */
     public void sendMessage(Message message) throws IOException {
 

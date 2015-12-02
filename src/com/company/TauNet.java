@@ -123,6 +123,13 @@ public class TauNet extends Utility {
                 //Get the contact we should send the message to
                 Contact recipient = getContactForUsername(input);
 
+
+                //Check if the recipient is available
+                if (!(new Sender(universalKey, portNumberSender).isAvailable(recipient))) {
+                    println("The user \"" + recipient.getUsername() + "\" is currently unavailable. Try again later.");
+                    break;
+                }
+
                 print("Enter your message: ");
 
                 //While the message is invalid, ask again
