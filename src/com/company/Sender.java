@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 
 /**
- * Copyright (c) Luke Kazmierowicz 2015
+ * Copyright (c) 2015 Luke Kazmierowicz
  * CS 300
  * Project: TauNet
  * Filename: Receiver.java

@@ -1,10 +1,10 @@
 package com.company;
 
-import java.util.InputMismatchException;
+
 import java.util.Scanner;
 
 /**
- * (c) Luke Kazmierowicz 2015
+ * Copyright (c) 2015 Luke Kazmierowicz
  * CS 300
  * Project: TauNet
  * File Name: Utility.java
@@ -28,101 +28,6 @@ public class Utility {
 
         input = new Scanner(System.in);
     }
-
-
-
-    /** Get an integer value from the user and return it.
-     * If they enter an invalid character, ask again. */
-    protected static int nextInt() {
-
-        //To store the number entered by the user.
-        int num;
-
-        //While the user keeps entering invalid characters,
-        while (true) {
-
-            //Get the next int.
-            try {
-                num = input.nextInt();
-                input.nextLine();
-
-                //No exception was thrown, return the number.
-                return num;
-
-            } //If an exception was thrown,
-            catch (InputMismatchException error) {
-
-                //Clear the buffer and ask the user to try again.
-                input.nextLine();
-                System.out.print("Expected an integer! Try again: ");
-            }
-        }
-    }
-
-
-
-
-
-    /** Get a double value from the user and return it.
-     * If they enter an invalid character, ask again. */
-    protected static double nextDouble() {
-
-        //To store the number entered by the user.
-        double num;
-
-        //While the user keeps entering invalid characters,
-        while (true) {
-
-            //Get the next double from the user.
-            try {
-                num = input.nextDouble();
-                input.nextLine();
-
-                //No exception was thrown, return the number.
-                return num;
-
-            } //If an exception was thrown,
-            catch (InputMismatchException error) {
-
-                //Clear the buffer and ask the user to try again.
-                input.nextLine();
-                System.out.print("Expected a decimal number! Try again: ");
-            }
-        }
-    }
-
-
-
-    /** Get a float value from the user and return it.
-     * If they enter an invalid character, ask again. */
-    protected static float nextFloat() {
-
-        //To store the number entered by the user.
-        float num;
-
-        //While the user keeps entering invalid characters,
-        while (true) {
-
-            //Get the next double from the user.
-            try {
-                num = input.nextFloat();
-                input.nextLine();
-
-                //No exception was thrown, return the number.
-                return num;
-
-            } //If an exception was thrown,
-            catch (InputMismatchException error) {
-
-                //Clear the buffer and ask the user to try again.
-                input.nextLine();
-                System.out.print("Expected a decimal number! Try again: ");
-            }
-        }
-    }
-
-
-
 
 
     /** Get a line from the user. */
@@ -180,29 +85,6 @@ public class Utility {
         System.out.print(String.format("\033[%dA",count)); // Move up
         System.out.print("\033[2K"); // Erase line content
         System.out.println();
-    }
-
-
-
-
-    /** Return the string with the first character made uppercase. */
-    protected static String firstUpper(final String str) {
-
-        //Convert the String to an array of characters
-        char [] array = str.toCharArray();
-
-        //If the array is not empty,
-        if (array.length > 0) {
-
-            //Make the first character uppercase.
-            array[0] = Character.toUpperCase(array[0]);
-
-            //Make a String object and return it.
-            return new String(array);
-        }
-
-        //Return the empty String we were given.
-        return str;
     }
 
 }

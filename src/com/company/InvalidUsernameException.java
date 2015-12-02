@@ -1,10 +1,12 @@
 package com.company;
 
 /**
- * (c) Luke Kazmierowicz 2015
+ * Copyright (c) 2015 Luke Kazmierowicz
  * CS 300
- * TauNet
+ * Project: TauNet
  * Filename: InvalidUsernameException.java
+ *
+ * Thrown when a username is encountered that is invalid.
  */
 public class InvalidUsernameException extends Exception {
     public InvalidUsernameException(String message) {

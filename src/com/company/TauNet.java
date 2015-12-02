@@ -8,13 +8,13 @@ import java.util.Queue;
 import java.util.TreeSet;
 
 /**
- * Copyright (c) Luke Kazmierowicz 2015
+ * Copyright (c) 2015 Luke Kazmierowicz
  * CS 300
  * Project: TauNet
  * Filename: TauNet.java
  *
  * References:
- *
+ *      TauNet Protocol v0.2
  *
  */
 public class TauNet extends Utility {
@@ -136,10 +136,10 @@ public class TauNet extends Utility {
                 while (true) {
                     input = nextLine();
 
-                    Message newMessage = null;
+                    Message newMessage;
                     try {
                         //Create the message object
-                        newMessage = new Message(version, recipient, systemUsername, input);
+                        newMessage = new Message(version, recipient, "luke", input);
 
                         //Send the message
                         Sender sender = new Sender(universalKey, portNumberSender);
@@ -196,7 +196,7 @@ public class TauNet extends Utility {
 
                 //Create a message
                 Contact recipient = lastMessageReceived.getSender();
-                Message newMessage = null;
+                Message newMessage;
                 try {
                     newMessage = new Message(version, recipient, systemUsername, input);
                     Sender sender = new Sender(universalKey, portNumberSender);

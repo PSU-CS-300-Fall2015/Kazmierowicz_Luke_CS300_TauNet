@@ -1,13 +1,12 @@
 package com.company;
 
 /**
- * Copyright (c) Luke Kazmierowicz 2015
+ * Copyright (c) 2015 Luke Kazmierowicz
  * CS 300
  * Project: TauNet
  * Filename: TauNet.java
  *
  * Stores a message and important information about it.
- *
  * */
 
 public class Message extends Utility {
@@ -161,7 +160,7 @@ public class Message extends Utility {
         }
 
         //Check if we are the intended recipient
-        if (notIntendedRecipient =!TauNet.isSystemUsername(recipientTemp)) {
+        if (notIntendedRecipient = !TauNet.isSystemUsername(recipientTemp)) {
             unknownRecipientUsername = recipientTemp;
         }
 

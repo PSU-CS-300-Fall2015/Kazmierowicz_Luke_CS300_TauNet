@@ -1,7 +1,7 @@
 package com.company;
 
 /**
- * Copyright (c) Luke Kazmierowicz 2015
+ * Copyright (c) 2015 Luke Kazmierowicz
  * CS 300
  * Project: TauNet
  * Filename: TauNet.java
@@ -160,6 +160,9 @@ public class Contact extends Utility implements Comparable<Contact> {
     public String toString() {
         return username + ": " + IPAddress;
     }
+
+
+
 
 
     /** Testing for Contact object */

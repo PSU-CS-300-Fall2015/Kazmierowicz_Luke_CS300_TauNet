@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * (c) Luke Kazmierowicz 2015
+ * Copyright (c) 2015 Luke Kazmierowicz
  * CS 300
  * Project: TauNet
  * Filename: CipherSaber2.java
@@ -181,7 +181,7 @@ public class CipherSaber2 extends Utility{
     public static void main(String[] args) {
 
 
-        FileInputStream fin = null;
+        FileInputStream fin;
         File file = new File("cstest.cs2");
 
         try {

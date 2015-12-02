@@ -2,7 +2,7 @@ package com.company;
 
 
 /**
- * Copyright (c) Luke Kazmierowicz 2015
+ * Copyright (c) 2015 Luke Kazmierowicz
  * CS 300
  * Project: TauNet
  * Filename: DisplayMessages.java
@@ -17,6 +17,7 @@ package com.company;
 
 public class DisplayMessages extends Utility implements Runnable {
 
+    //Time to wait between displaying new messages
     private final long refreshTime = 1000;//1 sec
 
     public void run() {
