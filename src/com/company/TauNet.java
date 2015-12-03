@@ -49,7 +49,7 @@ public class TauNet extends Utility {
         printerThread.start();
 
 
-        //Wait for receiver to try to connect
+        //Wait for receiver to try to connect before presenting option
         try {
             Thread.sleep(250);
         } catch (InterruptedException e) {
@@ -60,10 +60,8 @@ public class TauNet extends Utility {
         try {
             presentOptions();
         } catch (InterruptedException e) {
-            e.getMessage();
+            println(e.getMessage());
         }
-
-
     }
 
 
@@ -125,10 +123,13 @@ public class TauNet extends Utility {
 
 
                 //Check if the recipient is available
+                println("Checking connection...");
                 if (!(new Sender(universalKey, portNumberSender).isAvailable(recipient))) {
+                    deleteln();
                     println("The user \"" + recipient.getUsername() + "\" is currently unavailable. Try again later.");
                     break;
                 }
+                deleteln();
 
                 print("Enter your message: ");
 
@@ -177,7 +178,7 @@ public class TauNet extends Utility {
 
         //If we haven't received any messages yet
         if (lastMessageReceived == null) {
-            println("No previous message to reply to! Enter 'C' to compose a new message.");
+            println("There is no previous message to reply to! Enter 'C' to compose a new message.");
 
         }//If the message is from an unknown sender
         else if (lastMessageReceived.isFromUnknownSender()) {
