@@ -1,5 +1,7 @@
-## Luke_Kazmierowicz_TauNet
-####An implementation of the TauNet system requested from Bart Massey in CS 300 Fall 2015 at PSU
+### TauNet - Secure Messaging System
+Copyright © 2015 Luke Kazmierowicz
+
+An implementation of the TauNet system requested from Bart Massey in CS 300 Fall 2015 at PSU
 
 **To properly setup and run the TauNet software follow these steps:**
   1. Clone the repo to your Rasperry Pi
