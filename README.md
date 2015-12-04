@@ -4,7 +4,7 @@ Copyright © 2015 Luke Kazmierowicz
 An implementation of the TauNet system requested from Bart Massey in CS 300 Fall 2015 at PSU
 
 **To properly setup and run the TauNet software follow these steps:**
-  1. Clone the repo to your Rasperry Pi
+  1. Clone the repo to your Raspberry Pi
   2. Navigate to the directory: `Luke_Kazmierowicz_TauNet/out/production/Java`
   3. Create a text file named `data.txt` containing your TauNet password, username and the list of contacts. 
   *The file must be formatted correctly. Refer to the TauNet SDD for formatting specifics.*
