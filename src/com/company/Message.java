@@ -63,8 +63,6 @@ public class Message extends Utility {
     /** Construct a message that was received. */
     Message(final String encodedMessage) throws InvalidMessageException {
 
-        //println(encodedMessage);
-
         separateMessageParts(encodedMessage);
     }
 
@@ -100,12 +98,30 @@ public class Message extends Utility {
 
     /** Return a copy of the recipient */
     public Contact getRecipient() {
+
+        if (recipient == null) {
+            try {
+                return new Contact("EMPTY-CONTACT", "");
+            } catch (InvalidUsernameException e) {
+                e.printStackTrace();
+            }
+        }
+
         return recipient;
     }
 
 
     /** Return a copy of the sender */
     public Contact getSender() {
+
+        if (sender == null) {
+            try {
+                return new Contact("EMPTY-CONTACT", "");
+            } catch (InvalidUsernameException e) {
+                e.printStackTrace();
+            }
+        }
+
         return sender;
     }
 
@@ -126,11 +142,22 @@ public class Message extends Utility {
         //Skip newline
         i++;
 
+        //Check if the version number in the message is a float
+        try
+        {
+            Double.parseDouble(versionNumberTemp);
+        }
+        catch(NumberFormatException e)
+        {
+            throw new InvalidMessageException("Can't read message!\n" +
+                    "We are unable to recognize this message because it is in the wrong format or sent from a user with a different key.");
+        }
+
         //If the version number doesn't match, bail
         versionNumber = versionNumberTemp;
         if (!TauNet.matchesSystemVersion(versionNumber)) {
             throw new InvalidMessageException("Can't read message!\n" +
-                    "We are unable to recognize this message because is was sent from a different version of the TauNet system.");
+                    "We are unable to recognize this message because it was sent from a different version of the TauNet system.");
         }
 
 
@@ -184,36 +211,6 @@ public class Message extends Utility {
     }
 
 
-    /** Display the message and all its info. */
-    public void displayAll() {
-
-        if (unrecognizedMessage) {
-            print(body);
-            return;
-        }
-
-        println("Version: " + versionNumber);
-
-        print("From: ");
-        if (fromUnknownSender) {
-            print(unknownSenderUsername);
-        }
-        else {
-            sender.displayUsername();
-        }
-        println();
-
-        print("To: ");
-        if (notIntendedRecipient) {
-            println(unknownRecipientUsername);
-        } else {
-            println("You");
-        }
-
-        print(body);
-    }
-
-
 
     /** Display the username and body */
     public void display() {
@@ -238,37 +235,6 @@ public class Message extends Utility {
 
 
 
-    /** Display only the message body */
-    public void displayBodyOnly() {
-
-        if (unrecognizedMessage) {
-            if (body != null) {
-                print(body);
-            }
-            return;
-        }
-
-        printBodyIndented();
-    }
-
-
-
-    /** Print the body to the screen indented one tab. */
-    private void printBodyIndented() {
-
-        print("");
-        for (int i = 0; i < body.length(); i++) {
-
-            print(body.charAt(i));
-
-            //Print a tab after each new line
-            if (body.charAt(i) == '\n') {
-                print("\t");
-            }
-        }
-    }
-
-
     /** Return if the message is from an unknown sender or not. */
     public boolean isFromUnknownSender() {
         return fromUnknownSender;
@@ -276,18 +242,71 @@ public class Message extends Utility {
 
 
 
-    /** Testing for Message object */
+    /** Testing for Message object. Uncaught exceptions are considered fails.*/
     public static void main(String[] args) {
 
-        try {
-            Message mes = new Message("version: 1.0\nfrom: LukePi\nto: lukekaz9\n\nHello neighbor,\nHow are you doing?!");
-            //print("-");
+        //In the following tests any uncaught exception is considered a fail
+        boolean testsFailed = false;
 
-            mes.display();
+        //Test creating a message from a valid formatted string
+        try {
+            Message mes = new Message("version: 0.2\r\nfrom: LukePi\r\nto: lukekaz9\r\n\r\nHello neighbor,\nHow are you doing?!");
+            //mes.display();
         } catch(InvalidMessageException error) {
             println(error.getMessage());
+            testsFailed = true;
         }
 
+
+        //Test creating a message from an invalid formatted string
+        try {
+            Message mes = new Message(": 0.2\r\nfrom: LukePi\r\nto: lukekaz9\r\n\r\nHello neighbor,\nHow are you doing?!");
+            mes.display();
+            testsFailed = true;
+        } catch(InvalidMessageException error) {
+        }
+
+
+        //Test creating a message with a different version number
+        try {
+            Message mes = new Message("version: 0.1\r\nfrom: LukePi\r\nto: lukekaz9\r\n\r\nHello neighbor,\nHow are you doing?!");
+            mes.display();
+            testsFailed = true;
+        } catch(InvalidMessageException error) {
+        }
+
+
+        //Test creating an error message
+        Message mess = new Message();
+        mess.setAsError("This is an error message.");
+        if (!mess.body.equals("This is an error message."))
+            testsFailed = true;
+
+
+        //Test getting recipient
+        try {
+            Message mes = new Message("version: 0.2\r\nfrom: LukePi\r\nto: lukekaz9\r\n\r\nHello neighbor,\nHow are you doing?!");
+            Contact test = mes.getRecipient();
+        } catch(InvalidMessageException error) {
+            testsFailed = true;
+        }
+
+
+        //Test getting sender
+        try {
+            Message mes = new Message("version: 0.2\r\nfrom: LukePi\r\nto: lukekaz9\r\n\r\nHello neighbor,\nHow are you doing?!");
+            Contact test = mes.getRecipient();
+        } catch(InvalidMessageException error) {
+            testsFailed = true;
+        }
+
+
+        //Output if the tests passed of failed
+        if (testsFailed) {
+            println("\n\n*** MESSAGE TEST FAILED ***");
+        } else {
+            println("\n\n*** All Message Tests Passed ***");
+        }
     }
 
 

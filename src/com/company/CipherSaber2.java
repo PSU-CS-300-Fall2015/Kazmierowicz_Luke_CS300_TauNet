@@ -1,10 +1,5 @@
 package com.company;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
  * Copyright (c) 2015 Luke Kazmierowicz
@@ -159,61 +154,79 @@ public class CipherSaber2 extends Utility{
 
 
 
-    private static final char[] HEX_CHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
-            'B', 'C', 'D', 'E', 'F' };
-
-
-    public static String toHexString(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        int v;
-        for (int j = 0; j < bytes.length; j++) {
-            v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_CHARS[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_CHARS[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-
-
-
 
     /** Testing for CipherSaber2 */
     public static void main(String[] args) {
 
+        boolean testsFailed = false;
 
-        FileInputStream fin;
-        File file = new File("cstest.cs2");
-
+        //Test decryption against a file known to be encrypted using the CipherSaber2 algorithm
         try {
-            fin = new FileInputStream(file);
-
-            byte fileContent[] = new byte[(int)file.length()];
-
-            fin.read(fileContent);
-
-
-
-            println(toHexString(fileContent));
-
-
-            String key = "asdfg";
-
+            String key = "Al";
             CipherSaber2 rc4 = new CipherSaber2();
 
-            String message = rc4.decrypt(fileContent, key.getBytes());
+            //Create array of bytes of known cipher text
+            byte [] cipherText = new byte[14];
+            cipherText[0] = 0x41;
+            cipherText[1] = 0x6C;
+            cipherText[2] = 0x20;
+            cipherText[3] = 0x44;
+            cipherText[4] = 0x61;
+            cipherText[5] = 0x6B;
+            cipherText[6] = 0x6F;
+            cipherText[7] = 0x74;
+            cipherText[8] = 0x61;
+            cipherText[9] = 0x20;
+            cipherText[10] = 0x67;
+            cipherText[11] = 0x75;
+            cipherText[12] = 0x74;
+            cipherText[13] = 0x73;
 
-            println(message);
+            //Decrypt the ciphertext
+            String message = rc4.decrypt(cipherText, key.getBytes());
 
+            //Check if it worked
+            if (!message.equals("held")) {
+                testsFailed = true;
+            }
 
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (InvalidCiphertextException e) {
             e.printStackTrace();
         }
 
+
+        //Test encrypting and decrypting a message
+        try {
+            String key = "password";
+            CipherSaber2 rc4 = new CipherSaber2();
+
+
+            //Create array of bytes of known cipher text
+            String message = "Test message";
+
+            //Decrypt the ciphertext
+            byte [] cipherText = rc4.encrypt(message, key.getBytes());
+
+            //Decrypt the ciphertext
+            String decryptedMessage = rc4.decrypt(cipherText, key.getBytes());
+
+            //Check if it worked
+            if (!decryptedMessage.equals(message)) {
+                testsFailed = true;
+            }
+
+        } catch (InvalidCiphertextException e) {
+            e.printStackTrace();
+        }
+
+
+
+        //Output if the tests passed of failed
+        if (testsFailed) {
+            println("\n\n*** CIPHERSABER TEST FAILED ***");
+        } else {
+            println("\n\n*** All CipherSaber Tests Passed ***");
+        }
 
     }
 }

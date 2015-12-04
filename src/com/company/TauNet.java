@@ -140,7 +140,7 @@ public class TauNet extends Utility {
                     Message newMessage;
                     try {
                         //Create the message object
-                        newMessage = new Message(version, recipient, "luke", input);
+                        newMessage = new Message(version, recipient, systemUsername, input);
 
                         //Send the message
                         Sender sender = new Sender(universalKey, portNumberSender);
@@ -315,9 +315,11 @@ public class TauNet extends Utility {
     static public Contact getContactForUsername(final String username) throws UnknownUserException {
 
         try {
-            for (Contact user : users) {
-                if (user.equals(new Contact(username, ""))) {
-                    return user;
+            if (users != null) {
+                for (Contact user : users) {
+                    if (user.equals(new Contact(username, ""))) {
+                        return user;
+                    }
                 }
             }
 
@@ -333,7 +335,11 @@ public class TauNet extends Utility {
     /** Return if the username matches the system username. */
     static public boolean isSystemUsername(final String username) {
 
-        return systemUsername.equals(username);
+        if (username != null && systemUsername != null) {
+            return systemUsername.equals(username);
+        } else {
+            return false;
+        }
 
     }
 
@@ -341,7 +347,11 @@ public class TauNet extends Utility {
     /** Return if the version number matches. */
     static public boolean matchesSystemVersion(final String ver) {
 
-        return version.equals(ver);
+        if (ver != null && version != null) {
+            return version.equals(ver);
+        } else {
+            return false;
+        }
 
     }
 

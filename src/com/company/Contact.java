@@ -46,7 +46,7 @@ public class Contact extends Utility implements Comparable<Contact> {
      * Print the username to the screen.
      */
     public void displayUsername() {
-        print(username);
+        if (username != null) print(username);
     }
 
 
@@ -168,8 +168,12 @@ public class Contact extends Utility implements Comparable<Contact> {
     /** Testing for Contact object */
     public static void main(String[] args) {
 
+        // For each of the following tests the expected output is
+        // username of the message. A failed test is indicated by
+        // an error message
+        //-----------------------------------------------------------
+        boolean testsFailed = false;
         Contact luke;
-
         try {
             //Letters
             luke = new Contact("lukekaz", "198.29.41.107");
@@ -180,6 +184,7 @@ public class Contact extends Utility implements Comparable<Contact> {
 
         } catch(InvalidUsernameException error) {
             println(error.getMessage());
+            testsFailed = true;
         }
 
 
@@ -192,6 +197,7 @@ public class Contact extends Utility implements Comparable<Contact> {
 
         } catch(InvalidUsernameException error) {
             println(error.getMessage());
+            testsFailed = true;
         }
 
 
@@ -203,14 +209,21 @@ public class Contact extends Utility implements Comparable<Contact> {
 
         } catch(InvalidUsernameException error) {
             println(error.getMessage());
+            testsFailed = true;
         }
 
 
+        // For each of the following tests the expected output is
+        // an error message. If no error message is displayed the
+        // test has failed.
+        //-----------------------------------------------------------
         try {
             //Too short
             luke = new Contact("lu", "198.29.41.107");
             luke.display();
             println();
+
+            testsFailed = true;
 
         } catch(InvalidUsernameException error) {
             println(error.getMessage());
@@ -219,9 +232,11 @@ public class Contact extends Utility implements Comparable<Contact> {
 
         try {
             //Too Long
-            luke = new Contact("lukekazmierowicz", "198.29.41.107");
+            luke = new Contact("LukeKazmierowicz-LukeKazmierowicz", "198.29.41.107");
             luke.display();
             println();
+
+            testsFailed = true;
 
         } catch(InvalidUsernameException error) {
             println(error.getMessage());
@@ -234,12 +249,14 @@ public class Contact extends Utility implements Comparable<Contact> {
             luke.display();
             println();
 
+            testsFailed = true;
+
         } catch(InvalidUsernameException error) {
             println(error.getMessage());
         }
 
 
-
+        //Test equals method
         try {
             println();
             println();
@@ -257,12 +274,22 @@ public class Contact extends Utility implements Comparable<Contact> {
                 println("They match!");
             } else {
                 println("They don't match.");
+                testsFailed = true;
             }
 
         } catch(InvalidUsernameException error) {
             println(error.getMessage());
+            testsFailed = true;
         }
 
+
+
+        //Output if the tests passed of failed
+        if (testsFailed) {
+            println("\n\n*** CONTACT TEST FAILED ***");
+        } else {
+            println("\n\n*** All Contact Tests Passed ***");
+        }
 
     }
 
