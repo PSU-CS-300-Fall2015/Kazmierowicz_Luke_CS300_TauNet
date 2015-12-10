@@ -1,0 +1,9 @@
+Luke Kazmierowicz
+97 A
+
+Great job with docs, made it really easy to understand the
+project. Source code seemed like good Java. There are places
+where a unit test would have been a good thing. Nice work
+with Git.
+
+Good job!
